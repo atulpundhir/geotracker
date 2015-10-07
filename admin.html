@@ -1,0 +1,67 @@
+<!Doctype html>
+<html>
+<head>
+	<title>Locate Friends</title>
+	<script src="//cdn.pubnub.com/pubnub-3.7.14.min.js" type="text/javascript"></script>
+	<script src="https://maps.googleapis.com/maps/api/js?v=3"></script>
+	<script>
+	var map = null;
+	var gmarkers = [];
+	var firstData = true;
+	var intervalNumber = 0
+	var pubnub = PUBNUB.init({
+		publish_key: 'pub-c-0446378e-f47a-4aa2-a7a7-374e0acc15eb',
+		subscribe_key: 'sub-c-580adb24-6b3c-11e5-bcab-02ee2ddab7fe',
+		uuid: Math.floor((Math.random() * 1000) + 1)
+	});
+	console.log("Subscring....");
+	pubnub.subscribe({
+		channel: "hello_world",
+		presence: function(m){console.log(m)},
+		message: drawMap
+		
+	});
+
+	function drawMap(message, env, ch, timer, magic_ch){
+		var message = JSON.parse(message);
+		var latLng = new google.maps.LatLng(message.latitude, message.longitude);
+		var marker = new google.maps.Marker({position: latLng, map: map, title: "its me"});
+		marker.setMap(map);
+		map.panTo(new google.maps.LatLng(message.latitude, message.longitude))
+		map.setZoom(19);
+		console.log(marker);
+	}
+
+
+	</script>
+</head>
+<body>
+<div id="map-canvas" style="height:500px; width:500px;">&nbsp;</div>
+<div class='wrapper'>
+    <p>JSON will be received in 3 seconds</p>
+    <ul id='post'></ul>
+</div>
+<script>
+function initialize() {
+	console.log("called")
+    var mapOptions = {
+        center: new google.maps.LatLng(35.66, -80.50),
+        zoom: 8,
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+    };
+    map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+    if (gmarkers.length > 0) {
+        for (var i = 0; i < gmarkers.length; i++) {
+            gmarkers[i].setMap(map);
+        }
+    }
+	
+}
+
+google.maps.event.addDomListener(window, 'load', initialize)
+
+
+
+</script>
+</body>
+</html>
