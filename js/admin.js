@@ -17,7 +17,7 @@ pubnub.subscribe({
 });
 
 function checkPresence(data){
-	console.log(data);
+//	console.log(data);
 //	document.getElementById("online-users").innerHTML = "Hi Atul, you have "+data.occupancy+" users online"
 }
 
@@ -26,16 +26,16 @@ function drawMap(message, env, ch, timer, magic_ch){
 	var latLng = new google.maps.LatLng(message.latitude, message.longitude);
 //	console.log(message);
 	if(gmarkers.indexOf(message.uuid) == -1){
-		marker = new google.maps.Marker({position: latLng, map: map, title: message.uuid, icon: customIcon });
+		window[message.uuid] = new google.maps.Marker({position: latLng, map: map, title: message.uuid, icon: customIcon });
 		gmarkers.push(message.uuid);
-		marker.set("id", message.uuid);
+		window[message.uuid].set("id", message.uuid);
+		console.log(gmarkers.length);
 		checkPresence({"occupancy": gmarkers.length})
 	}else{
-		console.log(latLng);
-		marker.setPosition(latLng)
+		window[message.uuid].setPosition(latLng)
 	}
-	marker.setMap(map);
-	map.panTo(new google.maps.LatLng(message.latitude, message.longitude))
+	//marker.setMap(map);
+	//map.panTo(new google.maps.LatLng(message.latitude, message.longitude))
 	//map.setZoom(8);
 	//console.log(marker);
 }
@@ -44,8 +44,8 @@ function drawMap(message, env, ch, timer, magic_ch){
 function initialize() {
 	console.log("called")
     var mapOptions = {
-        center: new google.maps.LatLng(18.5203, 73.8567),
-        zoom: 8,
+        center: new google.maps.LatLng(35.6833, 139.6833),
+        zoom: 11,
         mapTypeId: google.maps.MapTypeId.ROADMAP
     };
     map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);

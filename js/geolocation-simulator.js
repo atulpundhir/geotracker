@@ -14,6 +14,7 @@
     var GeoSim = function(params) {
         var self = {};
         //private vars
+       
         var _watchTimer = null,
             _coords = params.coords,
             _speed = (params.speed || 40) / SECONDS_IN_HOUR, // km/second (defaults to 40kmh or 25mph)
@@ -82,6 +83,7 @@
             } else {
                 //path is complete
                 alert('you have arrived!');
+		stop_simulation = true;
             }
         }
 
