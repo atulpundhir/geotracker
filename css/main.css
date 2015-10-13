@@ -4,7 +4,11 @@
    Author's custom styles
    ========================================================================== */
 .section{
-	padding: 25px 0 25px 0;
+	padding: 0px;
+}
+.container{
+	margin: 0px;
+	padding: 0px;
 }
 .online-status{
 	padding-bottom: 0px;

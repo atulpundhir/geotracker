@@ -43,6 +43,13 @@ function showLocation(position){
 	
 }
 
+/*Only for simulator*/
+function publish(latitude, longitude){
+	var loc = {"latitude": latitude, "longitude": longitude, "uuid": my_uuid};
+	pub(JSON.stringify(loc));
+	
+}
+
 function showError(error){
 	switch(error.code){
 		case error.PERMISSION_DENIED:

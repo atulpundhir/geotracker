@@ -7,13 +7,27 @@
 <body>
 <p id="show_location"></p>
 <script>
-var my_uuid = Math.floor((Math.random() * 1000 ) + 1)
+var my_uuid =  "atul.pundhir@gmail.com"
 var pubnub =  PUBNUB.init({
 	publish_key: 'pub-c-0446378e-f47a-4aa2-a7a7-374e0acc15eb',
 	subscribe_key: 'sub-c-580adb24-6b3c-11e5-bcab-02ee2ddab7fe',
 	uuid: my_uuid
 });
 
+pubnub.subscribe({
+	channel: "-pnpreshello_world",
+	presence: checkPresence,
+	message: getMessage
+	
+});
+
+function getMessage(data){
+	console.log(data);
+}
+
+function checkPresence(data){
+	console.log(data);
+}
 function pub(message){
 	pubnub.publish({
 		channel: "hello_world",
