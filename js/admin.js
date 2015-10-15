@@ -38,17 +38,24 @@ function drawMap(message, env, ch, timer, magic_ch){
 	if(gmarkers.indexOf(message.uuid) == -1){
 		icon.fillColor = '#'+Math.floor(Math.random()*16777215).toString(16);
 		icon.rotation = message.heading;
+		var infowindow = new google.maps.InfoWindow({
+		  content:" Yay !!! I'm here "
+		  });
 		window[message.uuid] = new google.maps.Marker({position: latLng, map: map, title: message.uuid, icon: icon, animation: google.maps.Animation.DROP });
 		gmarkers.push(message.uuid);
 		window[message.uuid].set("id", message.uuid);
 		console.log(gmarkers.length);
 		checkPresence({"occupancy": gmarkers.length})
+		infowindow.open(map, window[message.uuid]);
 	}else{
 		window[message.uuid].setPosition(latLng)
-		icon.rotation = message.heading;
-		window[message.uuid].setOptions({icon:icon})
+		if(message.heading > 0 && message.heading <= 360){
+			icon.rotation = message.heading;
+			window[message.uuid].setOptions({icon:icon})
+		}
 		//window[message.uuid].setRotation(message.heading);
 	}
+	setTimeout(function(){infowindow.close();}, '2000');
 	//marker.setMap(map);
 	//map.panTo(new google.maps.LatLng(message.latitude, message.longitude))
 	//map.setZoom(8);
