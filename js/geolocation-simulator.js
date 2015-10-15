@@ -7,7 +7,7 @@
 (function() {
 
     //constants
-    var KM_IN_DEGREE = 110.562,
+    var KM_IN_DEGREE = 1110.562,
         SECONDS_IN_HOUR = 3600,
         UPDATE_INTERVAL = 1000;
     

@@ -5,7 +5,7 @@ var pubnub =  PUBNUB.init({
 });
 
 pubnub.subscribe({
-	channel: "hello_world",
+	channel: "tracking",
 	presence: checkPresence,
 	message: getMessage
 	
@@ -20,7 +20,7 @@ function checkPresence(data){
 }
 function pub(message){
 	pubnub.publish({
-		channel: "hello_world",
+		channel: "tracking",
 		message: message,
 		callback: function(m) {console.log("publishing..."); console.log(m)}
 	});	
@@ -36,7 +36,8 @@ function getLocation(){
 function showLocation(position){
 	var latitude = position.coords.latitude;
 	var longitude = position.coords.longitude;
-	var loc = {"latitude": latitude, "longitude": longitude, "uuid": my_uuid};
+	var heading = position.coords.heading;
+	var loc = {"latitude": latitude, "longitude": longitude, "uuid": my_uuid, "heading" : heading };
 	pub(JSON.stringify(loc));
 	lat.innerHTML = latitude; 
 	lon.innerHTML = longitude; 
@@ -44,8 +45,8 @@ function showLocation(position){
 }
 
 /*Only for simulator*/
-function publish(latitude, longitude){
-	var loc = {"latitude": latitude, "longitude": longitude, "uuid": my_uuid};
+function publish(latitude, longitude, heading){
+	var loc = {"latitude": latitude, "longitude": longitude, "uuid": my_uuid, "heading" : heading};
 	pub(JSON.stringify(loc));
 	
 }
