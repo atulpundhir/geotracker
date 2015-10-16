@@ -47,6 +47,8 @@ function drawMap(message, env, ch, timer, magic_ch){
 		console.log(gmarkers.length);
 		checkPresence({"occupancy": gmarkers.length})
 		infowindow.open(map, window[message.uuid]);
+		setTimeout(function(){infowindow.close();}, '2000');
+		window[message.uuid].addListener('click', function(){ showRoute(message.uuid, message.latitude, message.longitude)});
 	}else{
 		window[message.uuid].setPosition(latLng)
 		if(message.heading > 0 && message.heading <= 360){
@@ -55,7 +57,6 @@ function drawMap(message, env, ch, timer, magic_ch){
 		}
 		//window[message.uuid].setRotation(message.heading);
 	}
-	setTimeout(function(){infowindow.close();}, '2000');
 	//marker.setMap(map);
 	//map.panTo(new google.maps.LatLng(message.latitude, message.longitude))
 	//map.setZoom(8);
@@ -79,4 +80,48 @@ function initialize() {
 	
 }
 
+function showRoute(arg, latitude, longitude){
+	window[arg].setMap(map);
+	map.setZoom(16);
+	map.panTo(new google.maps.LatLng(latitude, longitude))
+	var centerControlDiv = document.createElement('div');
+	var centerControl = new CenterControl(centerControlDiv, map);
+	centerControlDiv.index = 1;
+	map.controls[google.maps.ControlPosition.TOP_CENTER].push(centerControlDiv);
+//	map.panTo(new google.maps.LatLng(message.latitude, message.longitude))
+}
 
+
+
+function CenterControl(controlDiv, map) {
+
+  	// Set CSS for the control border.
+	var controlUI = document.createElement('div');
+	controlUI.style.backgroundColor = '#3498db';
+	controlUI.style.border = '2px solid #fff';
+	controlUI.style.borderRadius = '3px';
+	controlUI.style.boxShadow = '0 2px 6px rgba(0,0,0,.3)';    
+	controlUI.style.cursor = 'pointer';                
+	controlUI.style.marginBottom = '22px';
+	controlUI.style.textAlign = 'center'; 
+        controlUI.title = 'Click to recenter the map';
+        controlDiv.appendChild(controlUI);
+
+	// Set CSS for the control interior.
+	var controlText = document.createElement('div');
+	controlText.style.color = '#FFFFFF';
+	controlText.style.fontFamily = 'Roboto,Arial,sans-serif';
+        controlText.style.fontSize = '16px';	  
+	controlText.style.lineHeight = '38px';
+  	controlText.style.paddingLeft = '5px';
+	controlText.style.paddingRight = '5px';
+	controlText.innerHTML = 'Back To Full View';
+	controlUI.appendChild(controlText);
+
+	// Setup the click event listeners: simply set the map to Chicago.
+	controlUI.addEventListener('click', function() {
+		map.setCenter(new google.maps.LatLng(35.6833, 139.6833));
+		map.setZoom(11);
+		map.controls[google.maps.ControlPosition.TOP_CENTER].clear()
+	});
+}
