@@ -18,9 +18,9 @@ function getMessage(data){
 function checkPresence(data){
 	console.log(data);
 }
-function pub(message){
+function pub(message, chan){
 	pubnub.publish({
-		channel: "tracking",
+		channel: chan,
 		message: message,
 		callback: function(m) {console.log("publishing..."); console.log(m)}
 	});	
@@ -38,16 +38,22 @@ function showLocation(position){
 	var longitude = position.coords.longitude;
 	var heading = position.coords.heading;
 	var loc = {"latitude": latitude, "longitude": longitude, "uuid": my_uuid, "heading" : heading };
-	pub(JSON.stringify(loc));
+	if(my_uuid == 'route@gmail.com'){
+		pub(JSON.stringify(loc), 'user2_tracking');
+	}else{
+		pub(JSON.stringify(loc), 'tracking');
+	}
 	lat.innerHTML = latitude; 
 	lon.innerHTML = longitude; 
 	
 }
 
 /*Only for simulator*/
-function publish(latitude, longitude, heading){
+function publish(latitude, longitude, heading, chan){
+	chan = typeof chan !== 'undefined' ? chan: 'tracking';
 	var loc = {"latitude": latitude, "longitude": longitude, "uuid": my_uuid, "heading" : heading};
-	pub(JSON.stringify(loc));
+	console.log(chan);
+	pub(JSON.stringify(loc), chan);
 	
 }
 

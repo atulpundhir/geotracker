@@ -20,7 +20,7 @@ var pubnub = PUBNUB.init({
 });
 console.log("Subscring....");
 pubnub.subscribe({
-	channel: "tracking",
+	channel: ['tracking','tracking_storage','user2_tracking'],
 	presence: checkPresence,
 	message: drawMap
 	
@@ -47,7 +47,7 @@ function drawMap(message, env, ch, timer, magic_ch){
 		console.log(gmarkers.length);
 		checkPresence({"occupancy": gmarkers.length})
 		infowindow.open(map, window[message.uuid]);
-		setTimeout(function(){infowindow.close();}, '2000');
+		setTimeout(function(){infowindow.close();}, '5000');
 		window[message.uuid].addListener('click', function(){ showRoute(message.uuid, message.latitude, message.longitude)});
 	}else{
 		window[message.uuid].setPosition(latLng)
@@ -81,6 +81,11 @@ function initialize() {
 }
 
 function showRoute(arg, latitude, longitude){
+	pubnub.history({
+		channel : 'tracking_storage',
+		count : 100,
+		callback : function(m){draw(m)}
+	});
 	window[arg].setMap(map);
 	map.setZoom(16);
 	map.panTo(new google.maps.LatLng(latitude, longitude))
@@ -88,10 +93,53 @@ function showRoute(arg, latitude, longitude){
 	var centerControl = new CenterControl(centerControlDiv, map);
 	centerControlDiv.index = 1;
 	map.controls[google.maps.ControlPosition.TOP_CENTER].push(centerControlDiv);
+/*
+	var flightPlanCoordinates = [
+	    {lat: 18.557208, lng: 73.906534},
+	    {lat: 18.571976, lng: 73.907178},
+	    {lat: 18.577996, lng: 73.907950},
+	    {lat: 18.575637, lng: 73.899721}
+	  ];
+	  var flightPath = new google.maps.Polyline({
+	    path: flightPlanCoordinates,
+	    geodesic: true,
+	    strokeColor: '#FF0000',
+	    strokeOpacity: 1.0,
+	    strokeWeight: 2
+	  });
+
+	  flightPath.setMap(map);
+*/
 //	map.panTo(new google.maps.LatLng(message.latitude, message.longitude))
 }
 
+function draw(m){
+	var route = m[0]; 
+	var planCords = [];
 
+	for(i=0, len=route.length; i < len; i++){
+		planCords.push({'lat': parseFloat(route[i].latitude), 'lng': parseFloat(route[i].longitude) })
+	}
+
+	var flightPlanCoordinates = [
+	    {lat: 18.557208, lng: 73.906534},
+	    {lat: 18.571976, lng: 73.907178},
+	    {lat: 18.577996, lng: 73.907950},
+	    {lat: 18.575637, lng: 73.899721}
+	  ];
+	console.log(flightPlanCoordinates);
+	console.log(planCords);
+	mypath = new google.maps.Polyline({
+	    path: planCords,
+	    geodesic: true,
+	    strokeColor: '#FF0000',
+	    strokeOpacity: 1.0,
+	    strokeWeight: 2
+	  });
+
+	  mypath.setMap(map);
+
+}
 
 function CenterControl(controlDiv, map) {
 
@@ -123,5 +171,6 @@ function CenterControl(controlDiv, map) {
 		map.setCenter(new google.maps.LatLng(35.6833, 139.6833));
 		map.setZoom(11);
 		map.controls[google.maps.ControlPosition.TOP_CENTER].clear()
+		mypath.setMap(null)
 	});
 }
