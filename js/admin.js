@@ -4,16 +4,6 @@ var firstData = true;
 var intervalNumber = 0;
 var iconBase = 'img/';
 var customIcon = new google.maps.MarkerImage("img/m4.png", null, null, null, new google.maps.Size(30,30));
-var icon = {
-   // path: "M150 0 L165 40 L135 40 Z",
-    path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
-    fillColor: '#FF0000',
-    fillOpacity: 1,
-    anchor: new google.maps.Point(0,0),
-    strokeWeight: 0,
-    scale: 6,
-    rotation: 0
-}
 var pubnub = PUBNUB.init({
 	publish_key: 'pub-c-0446378e-f47a-4aa2-a7a7-374e0acc15eb',
 	subscribe_key: 'sub-c-580adb24-6b3c-11e5-bcab-02ee2ddab7fe',
@@ -34,14 +24,23 @@ function checkPresence(data){
 function drawMap(message, env, ch, timer, magic_ch){
 	var message = JSON.parse(message);
 	var latLng = new google.maps.LatLng(message.latitude, message.longitude);
-	console.log(message);
+        var icon = {
+            path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+            fillColor: '#FF0000',
+            fillOpacity: 1,
+            anchor: new google.maps.Point(0,0),
+            strokeWeight: 0,
+            scale: 6,
+            rotation: 0
+        };
 	if(gmarkers.indexOf(message.uuid) == -1){
-		icon.fillColor = '#'+Math.floor(Math.random()*16777215).toString(16);
+		icon.fillColor = getRandomColor(); 
 		icon.rotation = message.heading;
 		var infowindow = new google.maps.InfoWindow({
 		  content:" Yay !!! I'm here "
 		  });
-		window[message.uuid] = new google.maps.Marker({position: latLng, map: map, title: message.uuid, icon: icon, animation: google.maps.Animation.DROP });
+                var title = "User "+ message.uuid + ";  Color: blue;  Make: Toyota;  Kms: 45000";  
+		window[message.uuid] = new google.maps.Marker({position: latLng, map: map, title: title, icon: icon, animation: google.maps.Animation.DROP });
 		gmarkers.push(message.uuid);
 		window[message.uuid].set("id", message.uuid);
 		console.log(gmarkers.length);
@@ -50,11 +49,25 @@ function drawMap(message, env, ch, timer, magic_ch){
 		setTimeout(function(){infowindow.close();}, '5000');
 		window[message.uuid].addListener('click', function(){ showRoute(message.uuid, message.latitude, message.longitude)});
 	}else{
-		window[message.uuid].setPosition(latLng)
-		if(message.heading > 0 && message.heading <= 360){
-			icon.rotation = message.heading;
-			window[message.uuid].setOptions({icon:icon})
-		}
+            window[message.uuid].setPosition(latLng)
+            if(message.uuid == 'route@gmail.com' && map.getZoom() == 16){
+                pubnub.history({
+                        channel : 'user2_tracking',
+                        count : 100,
+                        callback : function(m){draw(m)}
+                });
+            }else if(message.uuid == 'edwin@yahoo.com' && map.getZoom() == 16){
+                pubnub.history({
+                        channel : 'tracking_storage',
+                        count : 100,
+                        callback : function(m){draw(m)}
+                });
+            }
+
+            if(message.heading > 0 && message.heading <= 360){
+                    icon.rotation = message.heading;
+                    window[message.uuid].setOptions({icon:icon})
+            }
 		//window[message.uuid].setRotation(message.heading);
 	}
 	//marker.setMap(map);
@@ -81,12 +94,7 @@ function initialize() {
 }
 
 function showRoute(arg, latitude, longitude){
-	pubnub.history({
-		channel : 'tracking_storage',
-		count : 100,
-		callback : function(m){draw(m)}
-	});
-	window[arg].setMap(map);
+        window[arg].setMap(map);
 	map.setZoom(16);
 	map.panTo(new google.maps.LatLng(latitude, longitude))
 	var centerControlDiv = document.createElement('div');
@@ -120,15 +128,14 @@ function draw(m){
 	for(i=0, len=route.length; i < len; i++){
 		planCords.push({'lat': parseFloat(route[i].latitude), 'lng': parseFloat(route[i].longitude) })
 	}
+        console.log(planCords);
 
-	var flightPlanCoordinates = [
+	/*var flightPlanCoordinates = [
 	    {lat: 18.557208, lng: 73.906534},
 	    {lat: 18.571976, lng: 73.907178},
 	    {lat: 18.577996, lng: 73.907950},
 	    {lat: 18.575637, lng: 73.899721}
-	  ];
-	console.log(flightPlanCoordinates);
-	console.log(planCords);
+	  ];*/
 	mypath = new google.maps.Polyline({
 	    path: planCords,
 	    geodesic: true,
@@ -174,3 +181,14 @@ function CenterControl(controlDiv, map) {
 		mypath.setMap(null)
 	});
 }
+
+function getRandomColor() {
+    var letters = '012345'.split('');
+    var color = '#';        
+    color += letters[Math.round(Math.random() * 5)];
+    letters = '0123456789ABCDEF'.split('');
+    for (var i = 0; i < 5; i++) {
+        color += letters[Math.round(Math.random() * 15)];
+    }
+    return color;
+} 
