@@ -26,9 +26,14 @@ pubnub.subscribe({
 
 function load_message(message, env, ch, timer, magic_ch){
     var message = JSON.parse(message);
-    var infowindow = new google.maps.InfoWindow({
-      content: message.msg
-      });
+    var infoOptions = {
+        content: message.msg,
+        boxStyle: {
+            border: "1px red solid",
+            background: "red"
+        }
+    }
+    var infowindow = new google.maps.InfoWindow(infoOptions);
 
     console.log(message.msg);
     infowindow.open(map, window[message.uuid]);
@@ -36,7 +41,6 @@ function load_message(message, env, ch, timer, magic_ch){
 }
 
 function checkPresence(data){
-	console.log("PResences ---", data);
         document.getElementById('online-cnt').innerHTML  = "Online - " + data.occupancy;
         if(data.action == 'join'){
             if($('#'+data.uuid).length > 0 ){
@@ -46,7 +50,7 @@ function checkPresence(data){
             }    
         }   
 
-        if(data.action == 'leave'){
+        if(data.action == 'leave' || data.action == 'timeout'){
             if($('#'+data.uuid).length > 0 ){
                 $("#"+data.uuid).remove();
                 window[data.uuid].setMap(null);
@@ -68,7 +72,7 @@ function hereNow(){
 
 function drawMap(message, env, ch, timer, magic_ch){
 	var message = JSON.parse(message);
-	var latLng = new google.maps.LatLng(message.latitude, message.longitude);
+	var origin = new google.maps.LatLng(message.latitude, message.longitude);
         var icon = {
             path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
             fillColor: '#FF0000',
@@ -85,7 +89,7 @@ function drawMap(message, env, ch, timer, magic_ch){
 		  content:" Yay !!! I'm here "
 		  });
                 var title = "User "+ message.uuid + ";  Color: blue;  Make: Toyota;  Kms: 45000";  
-		window[message.uuid] = new google.maps.Marker({position: latLng, map: map, title: title, icon: icon, animation: google.maps.Animation.DROP });
+		window[message.uuid] = new google.maps.Marker({position: origin, map: map, title: title, icon: icon, animation: google.maps.Animation.DROP });
 		gmarkers.push(message.uuid);
 		window[message.uuid].set("id", message.uuid);
 		console.log(gmarkers.length);
@@ -93,8 +97,18 @@ function drawMap(message, env, ch, timer, magic_ch){
 		infowindow.open(map, window[message.uuid]);
 		setTimeout(function(){infowindow.close();}, '5000');
 		window[message.uuid].addListener('click', function(){ showRoute(message.uuid, message.latitude, message.longitude)});
+                var destination = new google.maps.LatLng(35.670807, 139.717569); // Latitude and Longitude of Gainmae
+                service = new google.maps.DistanceMatrixService();
+                service.getDistanceMatrix({
+                    origins: [origin],
+                    destinations: [destination],
+                    travelMode: google.maps.TravelMode.DRIVING,
+                    avoidHighways: false,
+                    avoidTolls: false
+                }, function(response, status){ calculateDistance(response, status, message.uuid) });
+
 	}else{
-            window[message.uuid].setPosition(latLng)
+            window[message.uuid].setPosition(origin)
             if(message.uuid == 'route' && map.getZoom() == 16){
                 pubnub.history({
                         channel : 'user2_tracking',
@@ -116,10 +130,26 @@ function drawMap(message, env, ch, timer, magic_ch){
             }
 		//window[message.uuid].setRotation(message.heading);
 	}
-	//marker.setMap(map);
+
+        //marker.setMap(map);
 	//map.panTo(new google.maps.LatLng(message.latitude, message.longitude))
 	//map.setZoom(8);
 	//console.log(marker);
+}
+
+function calculateDistance(response, status, uuid){
+    console.log("Distanceeee is" + uuid);
+    console.log(response);
+    var distance = null;
+    if(status=="OK") {
+         distance =  response.rows[0].elements[0].distance.text;
+        console.log(distance);
+        if($('#'+uuid).length > 0 && distance != null  ){
+            $("#"+uuid).remove();
+            $("#user_list").append("<li id="+uuid+">" + uuid + "  ("+distance+") </li>");
+        }
+    }    
+
 }
 
 
