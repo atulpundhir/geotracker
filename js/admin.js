@@ -50,6 +50,8 @@ function checkPresence(data){
             if($('#'+data.uuid).length > 0 ){
                 $("#"+data.uuid).remove();
                 window[data.uuid].setMap(null);
+                gmarkers.splice( $.inArray(data.uuid, gmarkers), 1 );
+                console.log(gmarkers);
              }   
         }
 }
@@ -122,7 +124,6 @@ function drawMap(message, env, ch, timer, magic_ch){
 
 
 function initialize() {
-	console.log("called")
     var mapOptions = {
         center: new google.maps.LatLng(35.6833, 139.6833),
         zoom: 11,
@@ -138,8 +139,31 @@ function initialize() {
     map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(
       document.getElementById('legend')
     );
-	
+
+    var osaka = document.getElementById('osaka');
+    map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(osaka);
+    osaka.addEventListener('click', function(){
+		map.setCenter(new google.maps.LatLng(34.679101, 135.474722));
+    });
+
+    var tokyo = document.getElementById('tokyo');
+    map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(tokyo);
+    tokyo.addEventListener('click', function(){
+		map.setCenter(new google.maps.LatLng(35.6833, 139.6833));
+    });
+    
+    var nagoya = document.getElementById('nagoya');
+    map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(nagoya);
+    nagoya.addEventListener('click', function(){
+		map.setCenter(new google.maps.LatLng(35.168185, 136.878125));
+    });
+    
+    
+
+
 }
+
+
 
 function showRoute(arg, latitude, longitude){
         window[arg].setMap(map);
@@ -211,7 +235,6 @@ function CenterControl(controlDiv, map) {
         controlUI.title = 'Click to recenter the map';
         controlDiv.appendChild(controlUI);
 
-	// Set CSS for the control interior.
 	var controlText = document.createElement('div');
 	controlText.style.color = '#FFFFFF';
 	controlText.style.fontFamily = 'Roboto,Arial,sans-serif';
@@ -222,7 +245,6 @@ function CenterControl(controlDiv, map) {
 	controlText.innerHTML = 'Back To Full View';
 	controlUI.appendChild(controlText);
 
-	// Setup the click event listeners: simply set the map to Chicago.
 	controlUI.addEventListener('click', function() {
                 for(i=0;i<polyLines.length;i++){
                    polyLines[i].setMap(null);

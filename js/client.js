@@ -86,6 +86,14 @@ function clearLocation(){
 }
 
 function disconnect(){
+    console.log("Disconnecting...")
+
+    /*Added subscribe to make sure leave event is fired. https://www.pubnub.com/knowledge-base/discussion/324/do-client-disconnects-trigger-leave-events*/
+    pubnub.subscribe({
+        channel: "disconnecting",
+	message: getMessage
+    }); 
+	
      pubnub.unsubscribe({
        channel : 'tracking',
    });

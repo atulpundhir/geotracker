@@ -4,14 +4,13 @@
     <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
     <script type="text/javascript" src="http://netdna.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 	<script src="//cdn.pubnub.com/pubnub-3.7.14.min.js" type="text/javascript"></script>
-	<script>
-	var my_uuid =  "che";
-	</script>
+	<script src="https://maps.googleapis.com/maps/api/js?v=3"></script>
+	<script src="js/admin.js"></script>
     <link href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <link href="http://pingendo.github.io/pingendo-bootstrap/themes/default/bootstrap.css" rel="stylesheet" type="text/css">
     <link href="css/main.css" rel="stylesheet" type="text/css">
   </head><body>
-    <div class="navbar navbar-default navbar-fixed-top">
+   <!-- <div class="navbar navbar-default navbar-fixed-top">
       <div class="container">
          <img height="50" alt="Brand" src="img/Logo.png">
         <div class="collapse navbar-collapse" id="navbar-ex-collapse">
@@ -22,31 +21,31 @@
     <div class="section online-status">
       <div class="container">
         <div class="row">
-          <div class="col-md-12 center-text">
+          <div class="col-md-12">
             <div class="page-header">
-              <h3> Latitude </h1>
-              <h1 id="show_lat"> ... </h3>
-              <h3> Longitude </h1>
-              <h1 id="show_long"> ... </h1>
+              <h5 id="online-users"></h5>
             </div>
-            <div>
-                <select name="sel_message" id="sel_message">
-                    <option value="Hello, I am here"> Hello, I am here</option>
-                    <option value="I will reach in half an hour">I will reach in half an hour</option>
-                    <option value="Sorry, I will not be able to come">Sorry, I will not be able to come </option>
-                </select>
-                <input type="button" value="Send" onClick="sendMessage()" /> 
-            </div>
-           <div>&nbsp;</div> 
-            <div>
-                <input type="button" value="Disconnect" onClick="disconnect()" />
-            </div>
-
+          </div>
+        </div>
+      </div>
+    </div> -->
+    <div class="section">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+		<div id="map-canvas" style="height:100%; width:100%;">&nbsp;</div>
           </div>
         </div>
       </div>
     </div>
-   <!--
+    <div id="legend">
+    <div id="online-cnt"></div>
+     <ul id="user_list"> </ul>
+   </div>
+    <div id="tokyo" class="city">Tokyo</div>
+    <div id="osaka" class="city">Osaka</div>
+    <div id="nagoya" class="city">Nagoya</div>
+	<!--
     <div class="section">
       <div class="container">
         <div class="row">
@@ -60,7 +59,6 @@
         </div>
       </div>
     </div>
--->
     <footer class="section section-primary footer">
       <div class="container">
         <div class="row">
@@ -71,8 +69,9 @@
       </div>
     </footer>
   
-<script src="js/client.js"></script>
+-->
 <script>
-getLocation();
+
+google.maps.event.addDomListener(window, 'load', initialize)
 </script>
 </body></html>
