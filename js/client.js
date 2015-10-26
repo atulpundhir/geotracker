@@ -38,7 +38,7 @@ function showLocation(position){
 	var longitude = position.coords.longitude;
 	var heading = position.coords.heading;
 	var loc = {"latitude": latitude, "longitude": longitude, "uuid": my_uuid, "heading" : heading };
-	if(my_uuid == 'route@gmail.com'){
+	if(my_uuid == 'route'){
 		pub(JSON.stringify(loc), 'user2_tracking');
 	}else{
 		pub(JSON.stringify(loc), 'tracking');

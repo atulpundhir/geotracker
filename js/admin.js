@@ -8,6 +8,7 @@ var pubnub = PUBNUB.init({
 	publish_key: 'pub-c-0446378e-f47a-4aa2-a7a7-374e0acc15eb',
 	subscribe_key: 'sub-c-580adb24-6b3c-11e5-bcab-02ee2ddab7fe',
 });
+polyLines = [];
 console.log("Subscring....");
 pubnub.subscribe({
 	channel: ['tracking','tracking_storage','user2_tracking'],
@@ -50,19 +51,20 @@ function drawMap(message, env, ch, timer, magic_ch){
 		window[message.uuid].addListener('click', function(){ showRoute(message.uuid, message.latitude, message.longitude)});
 	}else{
             window[message.uuid].setPosition(latLng)
-            if(message.uuid == 'route@gmail.com' && map.getZoom() == 16){
+            if(message.uuid == 'route' && map.getZoom() == 16){
                 pubnub.history({
                         channel : 'user2_tracking',
                         count : 100,
                         callback : function(m){draw(m)}
                 });
-            }else if(message.uuid == 'edwin@yahoo.com' && map.getZoom() == 16){
+            }else if(message.uuid == 'page' && map.getZoom() == 16){
                 pubnub.history({
                         channel : 'tracking_storage',
                         count : 100,
                         callback : function(m){draw(m)}
                 });
             }
+
 
             if(message.heading > 0 && message.heading <= 360){
                     icon.rotation = message.heading;
@@ -128,7 +130,7 @@ function draw(m){
 	for(i=0, len=route.length; i < len; i++){
 		planCords.push({'lat': parseFloat(route[i].latitude), 'lng': parseFloat(route[i].longitude) })
 	}
-        console.log(planCords);
+        //console.log(planCords);
 
 	/*var flightPlanCoordinates = [
 	    {lat: 18.557208, lng: 73.906534},
@@ -144,6 +146,7 @@ function draw(m){
 	    strokeWeight: 2
 	  });
 
+          polyLines.push(mypath);   
 	  mypath.setMap(map);
 
 }
@@ -175,10 +178,12 @@ function CenterControl(controlDiv, map) {
 
 	// Setup the click event listeners: simply set the map to Chicago.
 	controlUI.addEventListener('click', function() {
+                for(i=0;i<polyLines.length;i++){
+                   polyLines[i].setMap(null);
+                }
 		map.setCenter(new google.maps.LatLng(35.6833, 139.6833));
 		map.setZoom(11);
 		map.controls[google.maps.ControlPosition.TOP_CENTER].clear()
-		mypath.setMap(null)
 	});
 }
 
