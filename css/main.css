@@ -28,8 +28,27 @@
 h1{
 	padding: 20px;
 }
-
-
+#legend {
+    background: #337cbb;
+    margin-left: 10px;
+}
+#legend ul{
+    margin: 0px;
+    padding-left: 15px;
+    color: white;
+    padding-top: 5px;
+    padding-left: 18px;
+}
+#legend li{
+    padding: 0px;
+    padding: 3px;
+}
+#online-cnt{
+    font-weight: bold;
+    background-color: #9b59b6;
+    color: #FFFFFF;
+    padding: 3px;
+}
 
 
 

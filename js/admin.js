@@ -17,10 +17,52 @@ pubnub.subscribe({
 	
 });
 
-function checkPresence(data){
-//	console.log(data);
-//	document.getElementById("online-users").innerHTML = "Hi Atul, you have "+data.occupancy+" users online"
+
+pubnub.subscribe({
+	channel: 'message', 
+	message: load_message
+	
+});
+
+function load_message(message, env, ch, timer, magic_ch){
+    var message = JSON.parse(message);
+    var infowindow = new google.maps.InfoWindow({
+      content: message.msg
+      });
+
+    console.log(message.msg);
+    infowindow.open(map, window[message.uuid]);
+    setTimeout(function(){infowindow.close();}, '5000');
 }
+
+function checkPresence(data){
+	console.log("PResences ---", data);
+        document.getElementById('online-cnt').innerHTML  = "Online - " + data.occupancy;
+        if(data.action == 'join'){
+            if($('#'+data.uuid).length > 0 ){
+                console.log("Already existst");
+            }else{
+                $("#user_list").append("<li id="+data.uuid+">" + data.uuid + "</li>");
+            }    
+        }   
+
+        if(data.action == 'leave'){
+            if($('#'+data.uuid).length > 0 ){
+                $("#"+data.uuid).remove();
+                window[data.uuid].setMap(null);
+             }   
+        }
+}
+function hereNow(){
+    console.log("Inside herenow")
+    pubnub.here_now({
+        channel : 'tracking',
+        callback : function(m){console.log(m)}
+    });
+}
+
+//setInterval( hereNow, 3000);
+
 
 function drawMap(message, env, ch, timer, magic_ch){
 	var message = JSON.parse(message);
@@ -92,6 +134,10 @@ function initialize() {
             gmarkers[i].setMap(map);
         }
     }
+
+    map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(
+      document.getElementById('legend')
+    );
 	
 }
 
@@ -197,3 +243,4 @@ function getRandomColor() {
     }
     return color;
 } 
+

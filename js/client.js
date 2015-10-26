@@ -48,6 +48,13 @@ function showLocation(position){
 	
 }
 
+function sendMessage(){
+   var msg = document.getElementById("sel_message").value;
+   var payload = {"msg": msg, "uuid": my_uuid};
+   pub(JSON.stringify(payload), 'message');
+}
+
+
 /*Only for simulator*/
 function publish(latitude, longitude, heading, chan){
 	chan = typeof chan !== 'undefined' ? chan: 'tracking';
@@ -78,3 +85,26 @@ function clearLocation(){
 	navigator.geolocation.clearWatch(currentLocation);	
 }
 
+function disconnect(){
+     pubnub.unsubscribe({
+       channel : 'tracking',
+   });
+}
+
+
+/*
+function unsubscribe(){
+     pubnub.unsubscribe({
+       channel : 'tracking',
+   });
+   return "Let's go" 
+}
+
+window.onbeforeunload = function(){
+    pubnub.unsubscribe({
+       channel : 'tracking',
+   });
+   return 'Are you sure';
+}
+
+*/
