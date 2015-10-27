@@ -8,6 +8,7 @@ var pubnub = PUBNUB.init({
 	publish_key: 'pub-c-0446378e-f47a-4aa2-a7a7-374e0acc15eb',
 	subscribe_key: 'sub-c-580adb24-6b3c-11e5-bcab-02ee2ddab7fe',
 });
+var markerStatus = {};
 polyLines = [];
 console.log("Subscring....");
 pubnub.subscribe({
@@ -55,7 +56,7 @@ function checkPresence(data){
                 $("#"+data.uuid).remove();
                 window[data.uuid].setMap(null);
                 gmarkers.splice( $.inArray(data.uuid, gmarkers), 1 );
-                console.log(gmarkers);
+                delete markerStatus[data.uuid];
              }   
         }
 }
@@ -106,9 +107,11 @@ function drawMap(message, env, ch, timer, magic_ch){
                     avoidHighways: false,
                     avoidTolls: false
                 }, function(response, status){ calculateDistance(response, status, message.uuid) });
-
+                
+                updateTimeStampDictionary(message.uuid);
 	}else{
-            window[message.uuid].setPosition(origin)
+            window[message.uuid].setPosition(origin);
+            window[message.uuid].setIcon(icon);  
             if(message.uuid == 'route' && map.getZoom() == 16){
                 pubnub.history({
                         channel : 'user2_tracking',
@@ -128,7 +131,8 @@ function drawMap(message, env, ch, timer, magic_ch){
                     icon.rotation = message.heading;
                     window[message.uuid].setOptions({icon:icon})
             }
-		//window[message.uuid].setRotation(message.heading);
+
+            updateTimeStampDictionary(message.uuid);
 	}
 
         //marker.setMap(map);
@@ -189,10 +193,27 @@ function initialize() {
     });
     
     
-
+    setInterval(checkUserMovements, '5000');
 
 }
 
+function updateTimeStampDictionary(uuid){
+    var timestamp = Date.now();
+    markerStatus[uuid] = timestamp;
+}
+
+function checkUserMovements(){
+   var chktimestamp = Date.now(); 
+   for(var key in markerStatus){
+        if(markerStatus.hasOwnProperty(key)){
+            var timediff = parseInt((chktimestamp - markerStatus[key]) / 1000);
+            if(timediff > 10){
+                window[key].setIcon(customIcon);  
+            }
+            console.log(timediff);
+        }
+   }
+}
 
 
 function showRoute(arg, latitude, longitude){
@@ -295,4 +316,5 @@ function getRandomColor() {
     }
     return color;
 } 
+
 
