@@ -7,6 +7,7 @@ var customIcon = new google.maps.MarkerImage("img/m4.png", null, null, null, new
 var pubnub = PUBNUB.init({
 	publish_key: 'pub-c-0446378e-f47a-4aa2-a7a7-374e0acc15eb',
 	subscribe_key: 'sub-c-580adb24-6b3c-11e5-bcab-02ee2ddab7fe',
+        uuid: 'administrator'
 });
 var markerStatus = {};
 polyLines = [];
@@ -27,6 +28,7 @@ pubnub.subscribe({
 
 function load_message(message, env, ch, timer, magic_ch){
     var message = JSON.parse(message);
+    console.log(message);
     var infoOptions = {
         content: message.msg,
         boxStyle: {
@@ -42,11 +44,10 @@ function load_message(message, env, ch, timer, magic_ch){
 }
 
 function checkPresence(data){
-        console.log("ChkPresence");
            console.log(data);
-            if(data.action == 'join' && data.uuid.length < 6){
+            if(data.action == 'join' && data.uuid.length < 8){
                 if($('#'+data.uuid).length > 0 ){
-                    console.log("Already existst");
+                    console.log("Already exists");
                 }else{
                     $("#user_list").append("<li id="+data.uuid+"><a href='javascript:moveToMarker("+data.uuid+")'>" + data.uuid + "</a></li>");
                 }    
@@ -55,7 +56,9 @@ function checkPresence(data){
             if(data.action == 'leave' || data.action == 'timeout'){
                 if($('#'+data.uuid).length > 0 ){
                     $("#"+data.uuid).remove();
-                    //window[data.uuid].setMap(null);
+                    if(window[data.uuid].hasOwnProperty('title')){
+                        window[data.uuid].setMap(null);
+                    }
                     gmarkers.splice( $.inArray(data.uuid, gmarkers), 1 );
                     delete markerStatus[data.uuid];
                  }   
@@ -160,11 +163,18 @@ function calculateDistance(response, status, uuid){
     console.log(response);
     var distance = null;
     if(status=="OK") {
+        if(response.hasProperty(text)){
+            console.log("yess")
+        }else{
+            console.log("Noo")
+        }
+
          distance =  response.rows[0].elements[0].distance.text;
         console.log(distance);
         if($('#'+uuid).length > 0 && distance != null  ){
             $("#"+uuid).remove();
-            $("#user_list").append("<li id="+uuid+">" + uuid + "  ("+distance+") </li>");
+           // $("#user_list").append("<li id="+uuid+">" + uuid + "  ("+distance+") </li>");
+            $("#user_list").append("<li id="+uuid+"><a href='javascript:moveToMarker("+uuid+")'>" + uuid + "</a> ("+distance+")</li>");
         }
     }    
 

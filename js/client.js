@@ -1,6 +1,7 @@
 var pubnub =  PUBNUB.init({
 	publish_key: 'pub-c-0446378e-f47a-4aa2-a7a7-374e0acc15eb',
 	subscribe_key: 'sub-c-580adb24-6b3c-11e5-bcab-02ee2ddab7fe',
+        heartbeat: 15,
 	uuid: my_uuid
 });
 
@@ -96,9 +97,17 @@ function disconnect(){
 	message: getMessage
     }); 
 	
+    if(my_uuid == 'route'){
+         pubnub.unsubscribe({
+           channel : 'user2_tracking',
+       });
+    
+    }     
      pubnub.unsubscribe({
        channel : 'tracking',
    });
+
+   window.location.href = "thanks.html"
 }
 
 
