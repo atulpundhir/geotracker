@@ -129,6 +129,7 @@ function drawMap(message, env, ch, timer, magic_ch){
 	}else{
             window[message.uuid].setPosition(origin);
             window[message.uuid].setIcon(icon);  
+            /*
             if(message.uuid == 'route' && map.getZoom() == 16){
                 pubnub.history({
                         channel : 'user2_tracking',
@@ -141,7 +142,7 @@ function drawMap(message, env, ch, timer, magic_ch){
                         count : 100,
                         callback : function(m){draw(m)}
                 });
-            }
+            }*/
 
 
             if(message.heading > 0 && message.heading <= 360){
