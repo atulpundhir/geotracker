@@ -5,7 +5,7 @@
     <script type="text/javascript" src="http://netdna.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 	<script src="//cdn.pubnub.com/pubnub-3.7.14.min.js" type="text/javascript"></script>
 	<script>
-	var my_uuid =  "route"
+	var my_uuid =  "route";
 	</script>
     <link href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <link href="http://pingendo.github.io/pingendo-bootstrap/themes/default/bootstrap.css" rel="stylesheet" type="text/css">
@@ -30,8 +30,18 @@
               <h1 id="show_long"> ... </h1>
             </div>
             <div>
+                <select name="sel_message" id="sel_message">
+                    <option value=" あと5分で着きます。"> あと5分で着きます。 &#x1f60e;</option>
+                    <option value=" かなり混んでます！"> かなり混んでます！ &#x1f613;</option>
+                    <option value="事故です！助けてください">事故です！助けてください &#x1f613;</option>
+                </select>
+                <input type="button" value="Send" onClick="sendMessage()" /> 
+            </div>
+           <div>&nbsp;</div> 
+            <div>
                 <input type="button" value="Disconnect" onClick="disconnect()" />
             </div>
+
           </div>
         </div>
       </div>
@@ -63,6 +73,6 @@
   
 <script src="js/client.js"></script>
 <script>
-getLocation();
+setInterval(getLocation, '5000');
 </script>
 </body></html>

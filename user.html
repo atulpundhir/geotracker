@@ -31,9 +31,9 @@
             </div>
             <div>
                 <select name="sel_message" id="sel_message">
-                    <option value="Hello, I am here"> Hello, I am here</option>
-                    <option value="I will reach in half an hour">I will reach in half an hour</option>
-                    <option value="Sorry, I will not be able to come">Sorry, I will not be able to come </option>
+                    <option value=" あと5分で着きます。"> あと5分で着きます。 &#x1f60e;</option>
+                    <option value=" かなり混んでます！"> かなり混んでます！ &#x1f613;</option>
+                    <option value="事故です！助けてください">事故です！助けてください &#x1f613;</option>
                 </select>
                 <input type="button" value="Send" onClick="sendMessage()" /> 
             </div>
@@ -73,6 +73,6 @@
   
 <script src="js/client.js"></script>
 <script>
-getLocation();
+setInterval(getLocation, '5000');
 </script>
 </body></html>

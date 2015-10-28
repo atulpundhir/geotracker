@@ -43,6 +43,9 @@ h1{
     padding: 0px;
     padding: 3px;
 }
+#legend li a{
+    color:#FFF;
+}
 #online-cnt{
     font-weight: bold;
     background-color: #9b59b6;

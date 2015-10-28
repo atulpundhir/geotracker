@@ -42,24 +42,38 @@ function load_message(message, env, ch, timer, magic_ch){
 }
 
 function checkPresence(data){
-        document.getElementById('online-cnt').innerHTML  = "Online - " + data.occupancy;
-        if(data.action == 'join'){
-            if($('#'+data.uuid).length > 0 ){
-                console.log("Already existst");
-            }else{
-                $("#user_list").append("<li id="+data.uuid+">" + data.uuid + "</li>");
-            }    
-        }   
+        console.log("ChkPresence");
+           console.log(data);
+            if(data.action == 'join' && data.uuid.length < 6){
+                if($('#'+data.uuid).length > 0 ){
+                    console.log("Already existst");
+                }else{
+                    $("#user_list").append("<li id="+data.uuid+"><a href='javascript:moveToMarker("+data.uuid+")'>" + data.uuid + "</a></li>");
+                }    
+            }   
 
-        if(data.action == 'leave' || data.action == 'timeout'){
-            if($('#'+data.uuid).length > 0 ){
-                $("#"+data.uuid).remove();
-                window[data.uuid].setMap(null);
-                gmarkers.splice( $.inArray(data.uuid, gmarkers), 1 );
-                delete markerStatus[data.uuid];
-             }   
-        }
+            if(data.action == 'leave' || data.action == 'timeout'){
+                if($('#'+data.uuid).length > 0 ){
+                    $("#"+data.uuid).remove();
+                    //window[data.uuid].setMap(null);
+                    gmarkers.splice( $.inArray(data.uuid, gmarkers), 1 );
+                    delete markerStatus[data.uuid];
+                 }   
+            }
+            var online_cnt = $("#user_list").children().length;
+            document.getElementById('online-cnt').innerHTML  = "Online - " + online_cnt;
 }
+
+function moveToMarker(marker_id){
+    console.log(marker_id);
+    map.setZoom(16);
+    map.setCenter(marker_id.getPosition());
+    var centerControlDiv = document.createElement('div');
+    var centerControl = new CenterControl(centerControlDiv, map);
+    centerControlDiv.index = 1;
+    map.controls[google.maps.ControlPosition.TOP_CENTER].push(centerControlDiv);
+}
+
 function hereNow(){
     console.log("Inside herenow")
     pubnub.here_now({
@@ -94,7 +108,7 @@ function drawMap(message, env, ch, timer, magic_ch){
 		gmarkers.push(message.uuid);
 		window[message.uuid].set("id", message.uuid);
 		console.log(gmarkers.length);
-		checkPresence({"occupancy": gmarkers.length})
+	//	checkPresence({"occupancy": gmarkers.length})
 		infowindow.open(map, window[message.uuid]);
 		setTimeout(function(){infowindow.close();}, '5000');
 		window[message.uuid].addListener('click', function(){ showRoute(message.uuid, message.latitude, message.longitude)});
@@ -275,35 +289,38 @@ function draw(m){
 function CenterControl(controlDiv, map) {
 
   	// Set CSS for the control border.
-	var controlUI = document.createElement('div');
-	controlUI.style.backgroundColor = '#3498db';
-	controlUI.style.border = '2px solid #fff';
-	controlUI.style.borderRadius = '3px';
-	controlUI.style.boxShadow = '0 2px 6px rgba(0,0,0,.3)';    
-	controlUI.style.cursor = 'pointer';                
-	controlUI.style.marginBottom = '22px';
-	controlUI.style.textAlign = 'center'; 
-        controlUI.title = 'Click to recenter the map';
-        controlDiv.appendChild(controlUI);
+        if($("#back_button").length == 0){
+            var controlUI = document.createElement('div');
+            controlUI.id = 'back_button';
+            controlUI.style.backgroundColor = '#3498db';
+            controlUI.style.border = '2px solid #fff';
+            controlUI.style.borderRadius = '3px';
+            controlUI.style.boxShadow = '0 2px 6px rgba(0,0,0,.3)';    
+            controlUI.style.cursor = 'pointer';                
+            controlUI.style.marginBottom = '22px';
+            controlUI.style.textAlign = 'center'; 
+            controlUI.title = 'Click to recenter the map';
+            controlDiv.appendChild(controlUI);
 
-	var controlText = document.createElement('div');
-	controlText.style.color = '#FFFFFF';
-	controlText.style.fontFamily = 'Roboto,Arial,sans-serif';
-        controlText.style.fontSize = '16px';	  
-	controlText.style.lineHeight = '38px';
-  	controlText.style.paddingLeft = '5px';
-	controlText.style.paddingRight = '5px';
-	controlText.innerHTML = 'Back To Full View';
-	controlUI.appendChild(controlText);
+            var controlText = document.createElement('div');
+            controlText.style.color = '#FFFFFF';
+            controlText.style.fontFamily = 'Roboto,Arial,sans-serif';
+            controlText.style.fontSize = '16px';	  
+            controlText.style.lineHeight = '38px';
+            controlText.style.paddingLeft = '5px';
+            controlText.style.paddingRight = '5px';
+            controlText.innerHTML = 'Back To Full View';
+            controlUI.appendChild(controlText);
 
-	controlUI.addEventListener('click', function() {
-                for(i=0;i<polyLines.length;i++){
-                   polyLines[i].setMap(null);
-                }
-		map.setCenter(new google.maps.LatLng(35.6833, 139.6833));
-		map.setZoom(11);
-		map.controls[google.maps.ControlPosition.TOP_CENTER].clear()
-	});
+            controlUI.addEventListener('click', function() {
+                    for(i=0;i<polyLines.length;i++){
+                       polyLines[i].setMap(null);
+                    }
+                    map.setCenter(new google.maps.LatLng(35.6833, 139.6833));
+                    map.setZoom(11);
+                    map.controls[google.maps.ControlPosition.TOP_CENTER].clear()
+            });
+     }   
 }
 
 function getRandomColor() {

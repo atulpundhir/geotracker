@@ -11,6 +11,7 @@ pubnub.subscribe({
 	
 });
 
+
 function getMessage(data){
 	console.log(data);
 }
@@ -19,18 +20,19 @@ function checkPresence(data){
 	console.log(data);
 }
 function pub(message, chan){
-	pubnub.publish({
+        pubnub.publish({
 		channel: chan,
 		message: message,
 		callback: function(m) {console.log("publishing..."); console.log(m)}
 	});	
+
 }
 
 var lat = document.getElementById("show_lat");
 var lon = document.getElementById("show_long");
 var currentLocation = '';
 function getLocation(){
-	currentLocation = navigator.geolocation.watchPosition(showLocation, showError);
+	currentLocation = navigator.geolocation.getCurrentPosition(showLocation, showError);
 }
 
 function showLocation(position){
