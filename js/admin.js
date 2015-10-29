@@ -165,7 +165,11 @@ function calculateDistance(response, status, uuid){
     console.log(response);
     var distance = null;
     if(status=="OK") {
+        try{
          distance =  response.rows[0].elements[0].distance.text;
+        }catch(e){
+            console.log("Error" + e);
+        } 
         if($('#'+uuid).length > 0 && distance != null  ){
             $("#"+uuid).remove();
            // $("#user_list").append("<li id="+uuid+">" + uuid + "  ("+distance+") </li>");
@@ -229,7 +233,7 @@ function checkUserMovements(){
             if(timediff > 10){
                 window[key].setIcon(customIcon);  
             }
-           // console.log(timediff);
+            console.log(timediff);
         }
    }
 }
