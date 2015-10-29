@@ -28,7 +28,7 @@ pubnub.subscribe({
 
 function load_message(message, env, ch, timer, magic_ch){
     var message = JSON.parse(message);
-    console.log(message);
+    //console.log(message);
     var infoOptions = {
         content: message.msg,
         boxStyle: {
@@ -38,7 +38,7 @@ function load_message(message, env, ch, timer, magic_ch){
     }
     var infowindow = new google.maps.InfoWindow(infoOptions);
 
-    console.log(message.msg);
+   // console.log(message.msg);
     infowindow.open(map, window[message.uuid]);
     setTimeout(function(){infowindow.close();}, '5000');
 }
@@ -56,8 +56,8 @@ function checkPresence(data){
             if(data.action == 'leave' || data.action == 'timeout'){
                 if($('#'+data.uuid).length > 0 ){
                     $("#"+data.uuid).remove();
-                    if(window[data.uuid].hasOwnProperty('title')){
-                        window[data.uuid].setMap(null);
+                    if (typeof window[data.uuid] != "undefined"){ 
+                            window[data.uuid].setMap(null);
                     }
                     gmarkers.splice( $.inArray(data.uuid, gmarkers), 1 );
                     delete markerStatus[data.uuid];
@@ -117,6 +117,7 @@ function drawMap(message, env, ch, timer, magic_ch){
 		window[message.uuid].addListener('click', function(){ showRoute(message.uuid, message.latitude, message.longitude)});
                 var destination = new google.maps.LatLng(35.670807, 139.717569); // Latitude and Longitude of Gainmae
                 service = new google.maps.DistanceMatrixService();
+                console.log(service);
                 service.getDistanceMatrix({
                     origins: [origin],
                     destinations: [destination],
@@ -164,14 +165,7 @@ function calculateDistance(response, status, uuid){
     console.log(response);
     var distance = null;
     if(status=="OK") {
-        if(response.hasProperty(text)){
-            console.log("yess")
-        }else{
-            console.log("Noo")
-        }
-
          distance =  response.rows[0].elements[0].distance.text;
-        console.log(distance);
         if($('#'+uuid).length > 0 && distance != null  ){
             $("#"+uuid).remove();
            // $("#user_list").append("<li id="+uuid+">" + uuid + "  ("+distance+") </li>");
@@ -235,7 +229,7 @@ function checkUserMovements(){
             if(timediff > 10){
                 window[key].setIcon(customIcon);  
             }
-            console.log(timediff);
+           // console.log(timediff);
         }
    }
 }
