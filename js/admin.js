@@ -13,7 +13,7 @@ var markerStatus = {};
 polyLines = [];
 console.log("Subscring....");
 pubnub.subscribe({
-	channel: ['tracking','tracking_storage','user2_tracking'],
+	channel: ['tracking','tracking_storage','user2_tracking', 'stagnent'],
 	presence: checkPresence,
 	message: drawMap
 	
@@ -197,24 +197,29 @@ function initialize() {
       document.getElementById('legend')
     );
 
-    var osaka = document.getElementById('osaka');
-    map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(osaka);
-    osaka.addEventListener('click', function(){
-		map.setCenter(new google.maps.LatLng(34.679101, 135.474722));
+    var usa = document.getElementById('usa');
+    map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(usa);
+    usa.addEventListener('click', function(){
+		map.setCenter(new google.maps.LatLng(37.33182, -122.03118));
     });
 
-    var tokyo = document.getElementById('tokyo');
-    map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(tokyo);
-    tokyo.addEventListener('click', function(){
-		map.setCenter(new google.maps.LatLng(35.6833, 139.6833));
+    var india = document.getElementById('india');
+    map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(india);
+    india.addEventListener('click', function(){
+		map.setCenter(new google.maps.LatLng(27.175, 78.041944));
     });
     
-    var nagoya = document.getElementById('nagoya');
-    map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(nagoya);
-    nagoya.addEventListener('click', function(){
-		map.setCenter(new google.maps.LatLng(35.168185, 136.878125));
+    var japan = document.getElementById('japan');
+    map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(japan);
+    japan.addEventListener('click', function(){
+		map.setCenter(new google.maps.LatLng(34.664722, 135.433056));
     });
     
+    var phili = document.getElementById('phili');
+    map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(phili);
+    phili.addEventListener('click', function(){
+		map.setCenter(new google.maps.LatLng(16.910556, 121.054167));
+    });
     
     setInterval(checkUserMovements, '5000');
 
@@ -318,7 +323,7 @@ function CenterControl(controlDiv, map) {
             controlText.style.lineHeight = '38px';
             controlText.style.paddingLeft = '5px';
             controlText.style.paddingRight = '5px';
-            controlText.innerHTML = 'Back To Full View';
+            controlText.innerHTML = 'Back To Tokyo';
             controlUI.appendChild(controlText);
 
             controlUI.addEventListener('click', function() {

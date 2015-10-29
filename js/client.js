@@ -32,6 +32,21 @@ function pub(message, chan){
 var lat = document.getElementById("show_lat");
 var lon = document.getElementById("show_long");
 var currentLocation = '';
+
+function simPublish(){
+    if(my_uuid == 'bike0'){
+        var loc = {"latitude": 37.33182, "longitude": -122.03118, "uuid": my_uuid, "heading" : null};
+    }else if(my_uuid == 'bike1'){
+        var loc = {"latitude": 27.175, "longitude": 78.041944, "uuid": my_uuid, "heading" : null};
+    }else if(my_uuid == 'bike2'){
+        var loc = {"latitude": 34.664722, "longitude": 135.433056, "uuid": my_uuid, "heading" : null};
+    }else{
+        var loc = {"latitude": 16.910556, "longitude": 121.054167, "uuid": my_uuid, "heading" : null};
+    }    
+    pub(JSON.stringify(loc), 'stagnent');
+
+}
+
 function getLocation(){
 	currentLocation = navigator.geolocation.getCurrentPosition(showLocation, showError);
 }
