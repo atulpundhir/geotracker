@@ -197,22 +197,18 @@ function initialize() {
       document.getElementById('legend')
     );
 
-    var usa = document.getElementById('usa');
-    map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(usa);
-    usa.addEventListener('click', function(){
-		map.setCenter(new google.maps.LatLng(37.33182, -122.03118));
-    });
 
-    var india = document.getElementById('india');
-    map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(india);
-    india.addEventListener('click', function(){
-		map.setCenter(new google.maps.LatLng(27.175, 78.041944));
-    });
     
     var japan = document.getElementById('japan');
     map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(japan);
     japan.addEventListener('click', function(){
 		map.setCenter(new google.maps.LatLng(34.664722, 135.433056));
+    });
+
+    var usa = document.getElementById('usa');
+    map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(usa);
+    usa.addEventListener('click', function(){
+		map.setCenter(new google.maps.LatLng(37.33182, -122.03118));
     });
     
     var phili = document.getElementById('phili');
@@ -221,6 +217,11 @@ function initialize() {
 		map.setCenter(new google.maps.LatLng(16.910556, 121.054167));
     });
     
+    var india = document.getElementById('india');
+    map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(india);
+    india.addEventListener('click', function(){
+		map.setCenter(new google.maps.LatLng(27.175, 78.041944));
+    });
     setInterval(checkUserMovements, '5000');
 
 }
